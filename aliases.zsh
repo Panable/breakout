@@ -1,1 +1,1 @@
-alias r='make -j$(nproc) all && build/./triangle'
+alias r='make -j$(nproc) triangle && build/./triangle'
