@@ -12,28 +12,63 @@ int main()
     GLFWwindow* window = setup_glfw();
     assert(window && "GLFW FAILED TO INITIALISE");
 
+    /*                  3
+                   0.0f, 0.5f
+                       /\
+                      /  \
+                     /    \
+                    /      \
+                   /        \
+                  /          \
+                 /            \
+          1     /______________\     2
+    -0.5f, -0.5f                0.5f, -0.5f    */
+
     float vertices[] =
     {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f,
+        -0.5f, -0.5f, 0.0f, // 1
+         0.5f, -0.5f, 0.0f, // 2
+         0.0f,  0.5f, 0.0f, // 3
     };
     
-    // Generate VBO
+    
+    /* VBOs are used to 'buffer', objects to the GPU. I.e. send memory. */
     unsigned int VBO;
+
+    /* 
+     VAOs store everything needed to draw something (excluding shaders):
+                          glEnableVertexAttribArray                      
+                          glDisableVertexAttribArray                      
+                          glVertexAttribPointer
+                          glBindBuffer
+     -------------------------------------------------------------------
+     VAOs store buffer objects and the data layout.
+     They can also store EBOs too!
+   */
+
     unsigned int VAO;
 
-    glGenBuffers(1, &VBO);
-    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);      // Generate VBO ID
+    glGenVertexArrays(1, &VAO); // Generate VAO ID
 
     glBindVertexArray(VAO);
 
     // Bind VBO to the GPU
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    // copy data to bound buffer (GL_ARRAY_BUFFER)
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     /* Specify data format. */
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void*)0);
+
+    // 0                 -> position (location = 0)
+    // 3                 -> number of elements
+    // GL_FLOAT          -> type of data
+    // sizeof(float) * 3 -> size of single element / stride
+    // (void*)0          -> offset to start at
+
+
     glEnableVertexAttribArray(0);
 
     char infoLog[512];
@@ -79,13 +114,11 @@ int main()
         fprintf(stderr, "Linking failed %s", infoLog);
     }
 
-
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
     free(vertexShaderSource);
     free(fragmentShaderSource);
 
-    
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -104,6 +137,11 @@ int main()
 }
 
 /* Helper functions */
+
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
 
 static inline GLFWwindow* setup_glfw()
 {
@@ -133,6 +171,8 @@ static inline GLFWwindow* setup_glfw()
         fprintf(stderr, "%s\n", glewGetErrorString(err));
         return NULL;
     }
+
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     return window;
 }
