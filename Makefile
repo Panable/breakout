@@ -4,13 +4,21 @@ CC   := gcc
 CFLAGS := -Wall -Wextra
 BUILD_DIR = ./build
 
-all: breakout triangle triforce
+all: breakout triangle triforce texture
 
 breakout: $(BUILD_DIR)/breakout
 
 triangle: $(BUILD_DIR)/triangle
 
 triforce: $(BUILD_DIR)/triforce
+
+texture: $(BUILD_DIR)/texture
+
+$(BUILD_DIR)/texture: $(BUILD_DIR)/texture.o
+	$(CC) $(LIBS) $(BUILD_DIR)/texture.o -o $(BUILD_DIR)/texture
+
+$(BUILD_DIR)/texture.o: src/texture.c
+	$(CC) $(CFLAGS) -c src/texture.c -o $(BUILD_DIR)/texture.o
 
 $(BUILD_DIR)/breakout: $(BUILD_DIR)/breakout.o
 	$(CC) $(LIBS) $(BUILD_DIR)/breakout.o -o $(BUILD_DIR)/breakout
@@ -33,4 +41,4 @@ $(BUILD_DIR)/triforce.o: src/triforce.c res/triforce/simple.frag res/triforce/si
 clean:
 	rm ./build/*
 
-.PHONY: clean re all breakout triangle triforce
+.PHONY: clean re all breakout triangle triforce texture
