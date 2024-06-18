@@ -67,13 +67,13 @@ int main(void)
 
     /* Main Loop */
 
-    long lastTime = 0;
+    // long lastTime = 0;
     int additive = glGetUniformLocation(shader, "additive");
 
     while (!glfwWindowShouldClose(window))
     {
         double now = glfwGetTime();
-        double deltaTime = now - lastTime;
+        // double deltaTime = now - lastTime;
         float interpCol = (sinf(now) / 2.0f) + 0.5f;
         glfwPollEvents();
 
@@ -85,14 +85,11 @@ int main(void)
         glBindVertexArray(VAO);
         glUseProgram(shader);
 
-
-        printf("%f\n", interpCol);
-
         glUniform1f(additive, interpCol);
     
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, (void*)0);
         glfwSwapBuffers(window);
-        lastTime = now;
+        // clastTime = now;
     }
 
     glfwTerminate();
