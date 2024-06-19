@@ -46,16 +46,20 @@ int main(void)
                                                                     */
 
     float vertices[] = {
-        -0.5f,  0.5f, // 0
-         0.5f,  0.5f, // 1
-        -0.5f, -0.5f, // 2
-         0.5f, -0.5f, // 3
+        //  VERTEX  // TEX COORD //
+        -0.5f,  0.5f, 0.0f, 1.0f, // 0
+         0.5f,  0.5f, 1.0f, 1.0f, // 1
+        -0.5f, -0.5f, 0.0f, 0.0f, // 2
+         0.5f, -0.5f, 1.0f, 0.0f, // 3
     };
 
     unsigned int elements[] = {
         0, 2, 3, // A
         0, 1, 3, // B
     };
+
+    /* Quickly compile shader */
+    unsigned int sp = create_shader_program("res/texture/simple.vert", "res/texture/simple.frag");
 
     unsigned int VAO, VBO, EBO;
 
@@ -70,8 +74,12 @@ int main(void)
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void*)0);
+    //void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const GLvoid * pointer);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(sizeof(float) * 2));
+    glEnableVertexAttribArray(1);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -89,11 +97,11 @@ int main(void)
     //    stbi_image_free(data);
 
     int width, height, num_components;
-
+    stbi_set_flip_vertically_on_load(1);
     unsigned char* data = stbi_load("res/texture/texture.jpg", &width, &height, &num_components, 0);
     assert(data);
 
-    printf("Image has been loaded.\nWidth: %d\nHeight:%d\nNumber of Components: %d", width, height, num_components);
+    printf("Image has been loaded.\nWidth: %d\nHeight:%d\nNumber of Components: %d\n", width, height, num_components);
 
     // Sampler2D in fragment shader
     // pass in texture id to vertex to pass to fragment
@@ -103,9 +111,26 @@ int main(void)
     // mipmaps only for minifying NOT magnifying
     // texture(slot, coord) function fragment shader
     // Bind -> Active texture.
+    
+    unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
 
-    /* Quickly compile shader */
-    unsigned int sp = create_shader_program("res/texture/simple.vert", "res/texture/simple.frag");
+    glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
+    glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    stbi_image_free(data);
+    glGenerateMipmap(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texture);
+
+    int texLocation = glGetUniformLocation(sp, "tex");
+    glUniform1i(texLocation, 0);
 
     while (!glfwWindowShouldClose(window))
     {
