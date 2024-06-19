@@ -1,7 +1,7 @@
 # Compiler
 LIBS := -lGL -lGLEW -lglfw -lm
 CC   := gcc
-CFLAGS := -Wall -Wextra
+CFLAGS := -Wall -Wextra -ggdb
 BUILD_DIR = ./build
 
 all: breakout triangle triforce texture
@@ -14,8 +14,11 @@ triforce: $(BUILD_DIR)/triforce
 
 texture: $(BUILD_DIR)/texture
 
-$(BUILD_DIR)/texture: $(BUILD_DIR)/texture.o
-	$(CC) $(LIBS) $(BUILD_DIR)/texture.o -o $(BUILD_DIR)/texture
+$(BUILD_DIR)/texture: $(BUILD_DIR)/texture.o $(BUILD_DIR)/stb_image.o
+	$(CC) $(LIBS) $(BUILD_DIR)/texture.o $(BUILD_DIR)/stb_image.o -o $(BUILD_DIR)/texture
+
+$(BUILD_DIR)/stb_image.o: src/stb_image.c src/stb_image.h
+	$(CC) $(CFLAGS) -c src/stb_image.c -o $(BUILD_DIR)/stb_image.o
 
 $(BUILD_DIR)/texture.o: src/texture.c
 	$(CC) $(CFLAGS) -c src/texture.c -o $(BUILD_DIR)/texture.o
