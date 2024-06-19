@@ -147,6 +147,7 @@ char* file_to_buffer(const char* file_name)
     char* buffer = malloc(length + 1); // allocate space for file length + nullchar
 
     fread(buffer, 1, length, file);    // Read the file into buffer
+    buffer[length] = '\0';
     fclose(file);
     return buffer;
 }
