@@ -1,1 +1,1 @@
-alias r='make -j$(nproc) texture && build/./texture'
+alias r='make -j$(nproc) transforms && build/./transforms'

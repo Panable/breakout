@@ -14,6 +14,14 @@ triforce: $(BUILD_DIR)/triforce
 
 texture: $(BUILD_DIR)/texture
 
+transforms: $(BUILD_DIR)/transforms
+
+$(BUILD_DIR)/transforms: $(BUILD_DIR)/transforms.o $(BUILD_DIR)/stb_image.o
+	$(CC) $(LIBS) $(BUILD_DIR)/transforms.o $(BUILD_DIR)/stb_image.o -o $(BUILD_DIR)/transforms
+
+$(BUILD_DIR)/transforms.o: src/transforms.c src/pl_math.h
+	$(CC) $(CFLAGS) -c src/transforms.c -o $(BUILD_DIR)/transforms.o
+
 $(BUILD_DIR)/texture: $(BUILD_DIR)/texture.o $(BUILD_DIR)/stb_image.o
 	$(CC) $(LIBS) $(BUILD_DIR)/texture.o $(BUILD_DIR)/stb_image.o -o $(BUILD_DIR)/texture
 
@@ -44,4 +52,4 @@ $(BUILD_DIR)/triforce.o: src/triforce.c res/triforce/simple.frag res/triforce/si
 clean:
 	rm ./build/*
 
-.PHONY: clean re all breakout triangle triforce texture
+.PHONY: clean re all breakout triangle triforce texture transforms
