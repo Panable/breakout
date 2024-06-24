@@ -4,16 +4,24 @@
 
 int main(void)
 {
-    float test = 1.0f;
-    printf("%.2f\n", test);
-    mat3f matrix;
-
-    vec3f test_vec = 
+    vec2f test_vec = 
     {
         1.0f,
         2.0f,
-        3.0f,
     };
+
+    vec2f scaled = {0};
+
+    vec2f scale_factor = {1.0f, 1.0f};
+
+    plm_vec2f_scale(test_vec, (vec2f){2.0f, 2.0f}, scaled);
+    printf("translated vector:\n");
+    plm_vec2f_dump(scaled);
+
+    return 0;
+    float test = 1.0f;
+    printf("%.2f\n", test);
+    mat3f matrix;
 
     mat3f a =
     {
