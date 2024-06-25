@@ -206,9 +206,9 @@ char* read_file(const char* file_name)
     long sz = ftell(file);
     rewind(file);
 
-    char* buf = malloc(sz + 1);
+    char* buf = malloc(sz - 1);
 
-    fread(buf, 1, sz, file);
+    fread(buf, 1, sz - 1, file);
     buf[sz] = '\0';
 
     return buf;
