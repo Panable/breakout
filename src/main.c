@@ -15,10 +15,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
 extern int keys[1024];
-extern void g_ProcessInput(float deltaTime);
-extern void g_Update(float deltaTime);
-extern void g_Render();
-extern void g_Release();
+extern void g_process_input(float deltaTime);
+extern void g_update(float deltaTime);
+extern void g_render();
+extern void g_release();
 
 int main(void)
 {
@@ -72,19 +72,19 @@ int main(void)
         lastFrame = currentFrame;
         glfwPollEvents();
 
-        g_ProcessInput(deltaTime);
-        g_Update(deltaTime);
+        g_process_input(deltaTime);
+        g_update(deltaTime);
 
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         
-        g_Render();
+        g_render();
 
         glfwSwapBuffers(window);
     }
 
     glfwTerminate();
-    g_Release();
+    g_release();
     return 0;
 }
 
