@@ -128,9 +128,9 @@ void plm_mat3f_mul(mat3f a, mat3f b, mat3f dest)
 
 void plm_mat3f_dump(mat3f mat)
 {
-    printf("\t%.2f, %.2f, %.2f\n", mat[0][0], mat[0][1], mat[0][2]);    
-    printf("\t%.2f, %.2f, %.2f\n", mat[1][0], mat[1][1], mat[1][2]);    
-    printf("\t%.2f, %.2f, %.2f\n", mat[2][0], mat[2][1], mat[2][2]);    
+    printf("\t%.2f, %.2f, %.2f\n", mat[0][0], mat[0][1], mat[0][2]);
+    printf("\t%.2f, %.2f, %.2f\n", mat[1][0], mat[1][1], mat[1][2]);
+    printf("\t%.2f, %.2f, %.2f\n", mat[2][0], mat[2][1], mat[2][2]);
 }
 
 void plm_vec2f_dump(vec2f vec)

@@ -1,55 +1,55 @@
-# Compiler
-LIBS := -lGL -lGLEW -lglfw -lm
-CC   := gcc
+# Thanks to Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/)
+TARGET_EXEC := breakout
+
+BUILD_DIR := ./build
+SRC_DIRS := ./src
+
+CC     := gcc
+CXX    := gcc
 CFLAGS := -Wall -Wextra -ggdb
-BUILD_DIR = ./build
+LDFLAGS := -lGL -lGLEW -lglfw -lm
 
-all: breakout triangle triforce texture
+# Find all the C and C++ files we want to compile
+# Note the single quotes around the * expressions. The shell will incorrectly expand these otherwise, but we want to send the * directly to the find command.
+SRCS := $(shell find $(SRC_DIRS) -name '*.cpp' -or -name '*.c' -or -name '*.s')
 
-breakout: $(BUILD_DIR)/breakout
+# Prepends BUILD_DIR and appends .o to every src file
+# As an example, ./your_dir/hello.cpp turns into ./build/./your_dir/hello.cpp.o
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
-triangle: $(BUILD_DIR)/triangle
+# String substitution (suffix version without %).
+# As an example, ./build/hello.cpp.o turns into ./build/hello.cpp.d
+DEPS := $(OBJS:.o=.d)
 
-triforce: $(BUILD_DIR)/triforce
+# Every folder in ./src will need to be passed to GCC so that it can find header files
+INC_DIRS := $(shell find $(SRC_DIRS) -type d)
+# Add a prefix to INC_DIRS. So moduleA would become -ImoduleA. GCC understands this -I flag
+INC_FLAGS := $(addprefix -I,$(INC_DIRS))
 
-texture: $(BUILD_DIR)/texture
+# The -MMD and -MP flags together generate Makefiles for us!
+# These files will have .d instead of .o as the output.
+CPPFLAGS := $(INC_FLAGS) -MMD -MP
 
-transforms: $(BUILD_DIR)/transforms
+# The final build step.
+$(BUILD_DIR)/$(TARGET_EXEC): $(OBJS)
+	$(CXX) $(OBJS) -o $@ $(LDFLAGS)
 
-$(BUILD_DIR)/transforms: $(BUILD_DIR)/transforms.o $(BUILD_DIR)/stb_image.o
-	$(CC) $(LIBS) $(BUILD_DIR)/transforms.o $(BUILD_DIR)/stb_image.o -o $(BUILD_DIR)/transforms
+# Build step for C source
+$(BUILD_DIR)/%.c.o: %.c
+	mkdir -p $(dir $@)
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/transforms.o: src/transforms.c src/pl_math.h
-	$(CC) $(CFLAGS) -c src/transforms.c -o $(BUILD_DIR)/transforms.o
+# Build step for C++ source
+$(BUILD_DIR)/%.cpp.o: %.cpp
+	mkdir -p $(dir $@)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-$(BUILD_DIR)/texture: $(BUILD_DIR)/texture.o $(BUILD_DIR)/stb_image.o
-	$(CC) $(LIBS) $(BUILD_DIR)/texture.o $(BUILD_DIR)/stb_image.o -o $(BUILD_DIR)/texture
 
-$(BUILD_DIR)/stb_image.o: src/stb_image.c src/stb_image.h
-	$(CC) $(CFLAGS) -c src/stb_image.c -o $(BUILD_DIR)/stb_image.o
-
-$(BUILD_DIR)/texture.o: src/texture.c
-	$(CC) $(CFLAGS) -c src/texture.c -o $(BUILD_DIR)/texture.o
-
-$(BUILD_DIR)/breakout: $(BUILD_DIR)/breakout.o
-	$(CC) $(LIBS) $(BUILD_DIR)/breakout.o -o $(BUILD_DIR)/breakout
-
-$(BUILD_DIR)/breakout.o: src/breakout.c
-	$(CC) $(CFLAGS) -c src/breakout.c -o $(BUILD_DIR)/breakout.o
-
-$(BUILD_DIR)/triangle: $(BUILD_DIR)/triangle.o
-	$(CC) $(LIBS) $(BUILD_DIR)/triangle.o -o $(BUILD_DIR)/triangle
-
-$(BUILD_DIR)/triangle.o: src/triangle.c
-	$(CC) $(CFLAGS) -c src/triangle.c -o $(BUILD_DIR)/triangle.o
-
-$(BUILD_DIR)/triforce: $(BUILD_DIR)/triforce.o
-	$(CC) $(LIBS) $(BUILD_DIR)/triforce.o -o $(BUILD_DIR)/triforce
-
-$(BUILD_DIR)/triforce.o: src/triforce.c res/triforce/simple.frag res/triforce/simple.vert
-	$(CC) $(CFLAGS) -c src/triforce.c -o $(BUILD_DIR)/triforce.o
-
+.PHONY: clean
 clean:
-	rm ./build/*
+	rm -r $(BUILD_DIR)
 
-.PHONY: clean re all breakout triangle triforce texture transforms
+# Include the .d makefiles. The - at the front suppresses the errors of missing
+# Makefiles. Initially, all the .d files will be missing, and we don't want those
+# errors to show up.
+-include $(DEPS)

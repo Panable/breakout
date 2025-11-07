@@ -8,7 +8,7 @@
 
 static inline unsigned int gen_shader(const char* vs, const char* fs);
 static inline GLFWwindow* setup_glfw();
-char* file_to_buffer();
+char* file_to_buffer(const char* file_name);
 
 int main(void)
 {

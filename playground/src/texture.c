@@ -17,7 +17,7 @@ int main(void)
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_API, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     window = glfwCreateWindow(1920, 1080, "Texture", NULL, NULL);
     glfwMakeContextCurrent(window);
@@ -59,7 +59,7 @@ int main(void)
     };
 
     /* Quickly compile shader */
-    unsigned int sp = create_shader_program("res/texture/simple.vert", "res/texture/simple.frag");
+    unsigned int sp = create_shader_program("res/texture/simple_v.glsl", "res/texture/simple_f.glsl");
 
     unsigned int VAO, VBO, EBO;
 
@@ -121,8 +121,13 @@ int main(void)
     glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_NEAREST);
     glTextureParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+    glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+    glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    stbi_image_free(data);
+    //stbi_image_free(data);
     glGenerateMipmap(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -203,12 +208,12 @@ char* read_file(const char* file_name)
     FILE* file = fopen(file_name, "r");
     assert(file);
     fseek(file, 0, SEEK_END);
-    long sz = ftell(file);
+    long sz = ftell(file); // this gives you the size of the file. The end is usually a \n
     rewind(file);
 
-    char* buf = malloc(sz - 1);
+    char* buf = malloc(sz + 1); // add one more for null terminating
 
-    fread(buf, 1, sz - 1, file);
+    fread(buf, 1, sz, file); // read the file
     buf[sz] = '\0';
 
     return buf;

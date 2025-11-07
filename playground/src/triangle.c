@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 static inline GLFWwindow* setup_glfw();
-char* file_to_buffer();
+char* file_to_buffer(const char* file_name);
 
 int main()
 {
