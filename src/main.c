@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#define SCR_WIDTH 800 * 3
-#define SCR_HEIGHT 600 * 3
+#define SCR_WIDTH 800
+#define SCR_HEIGHT 600
 
 void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id, GLenum severity,
                             GLenum length, const char* message, const void* userparam);

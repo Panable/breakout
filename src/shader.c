@@ -50,6 +50,7 @@ Shader shdr_compile(const char* v_src, const char* f_src, const char* g_src)
     if(shdr_check_compile_errors(prg_id, "PROGRAM"))
     {
         glDeleteProgram(prg_id);
+        prg_id = 0;
     }
 
 cleanup:
@@ -90,6 +91,11 @@ unsigned int shdr_check_compile_errors(unsigned int id, const char* type)
 
 void shdr_set_float(const char* name, float value, Shader shdr)
 {
+    if (shdr == 0) {
+        fprintf(stderr, "Error: Invalid shader program (0) for uniform '%s'\n", name);
+        return;
+    }
+    
     int location = glGetUniformLocation(shdr, name);
 
     if (location == -1) {
@@ -103,6 +109,11 @@ void shdr_set_float(const char* name, float value, Shader shdr)
 
 void shdr_set_int(const char* name, int value, Shader shdr)
 {
+    if (shdr == 0) {
+        fprintf(stderr, "Error: Invalid shader program (0) for uniform '%s'\n", name);
+        return;
+    }
+    
     int location = glGetUniformLocation(shdr, name);
 
     if (location == -1) {
@@ -115,9 +126,16 @@ void shdr_set_int(const char* name, int value, Shader shdr)
 
 void shdr_set_vec2f(const char* name, vec2 value, Shader shdr)
 {
+    if (shdr == 0)
+    {
+        fprintf(stderr, "Error: Invalid shader program (0) for uniform '%s'\n", name);
+        return;
+    }
+    
     int location = glGetUniformLocation(shdr, name);
 
-    if (location == -1) {
+    if (location == -1)
+    {
         fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr);
         return;
     }
@@ -127,9 +145,16 @@ void shdr_set_vec2f(const char* name, vec2 value, Shader shdr)
 
 void shdr_set_vec3f(const char* name, vec3 value, Shader shdr)
 {
+    if (shdr == 0)
+    {
+        fprintf(stderr, "Error: Invalid shader program (0) for uniform '%s'\n", name);
+        return;
+    }
+    
     int location = glGetUniformLocation(shdr, name);
 
-    if (location == -1) {
+    if (location == -1)
+    {
         fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr);
         return;
     }
@@ -139,6 +164,12 @@ void shdr_set_vec3f(const char* name, vec3 value, Shader shdr)
 
 void shdr_set_vec4f(const char* name, vec4 value, Shader shdr)
 {
+    if (shdr == 0)
+    {
+        fprintf(stderr, "Error: Invalid shader program (0) for uniform '%s'\n", name);
+        return;
+    }
+    
     int location = glGetUniformLocation(shdr, name);
 
     if (location == -1) {
@@ -151,9 +182,15 @@ void shdr_set_vec4f(const char* name, vec4 value, Shader shdr)
 
 void shdr_set_mat4(const char* name, mat4 mat, Shader shdr)
 {
+    if (shdr == 0) {
+        fprintf(stderr, "Error: Invalid shader program (0) for uniform '%s'\n", name);
+        return;
+    }
+    
     int location = glGetUniformLocation(shdr, name);
 
-    if (location == -1) {
+    if (location == -1)
+    {
         fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr);
         return;
     }

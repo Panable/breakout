@@ -3,15 +3,15 @@
 #include <GLFW/glfw3.h>
 #include <stdio.h>
 
-#define SCR_WIDTH 800 * 3
-#define SCR_HEIGHT 600 * 3
+#define SCR_WIDTH 800
+#define SCR_HEIGHT 600
 
 int keys[1024] = {0};
 
-enum SpriteID 
+enum TextureID 
 {
-    SPR_FACE,
-    SPR_CNT
+    TEX_FACE,
+    TEX_CNT
 };
 
 enum ShaderID
@@ -23,6 +23,7 @@ enum ShaderID
 SpriteRenderer sr;
 
 Shader shaders[SHDR_CNT] = {0};
+Texture textures[TEX_CNT] = {0};
 
 void g_init()
 {
@@ -36,6 +37,8 @@ void g_init()
     shdr_set_mat4("projection", projection, shaders[SHDR_FACE]);
 
     sr = sr_create(shaders[SHDR_FACE]);
+
+    textures[TEX_FACE] = load_texture_from_file("res/awesomeface.png", true);
 }
 
 void g_process_input(float deltaTime)
@@ -49,6 +52,12 @@ void g_update(float deltaTime)
 
 void g_render()
 {
+    vec2 pos = {200.0f, 200.0f};
+    vec2 size = {300.0f, 400.0f};
+    float rot = 45.0f;
+    vec3 col = {0.0f, 1.0f, 0.0f};
+
+    sr_draw_sprite(textures[TEX_FACE], pos, size, rot, col, sr);
 }
 
 void g_release()

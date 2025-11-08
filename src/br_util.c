@@ -7,13 +7,21 @@ char* read_file(const char* file_name)
 {
     /* Get length of file */
     FILE* file = fopen(file_name, "rb");
+    if (!file) {
+        fprintf(stderr, "Error: Failed to open file '%s'\n", file_name);
+        return NULL;
+    }
+    
     fseek(file, 0, SEEK_END);
     long sz = ftell(file);
+    rewind(file);
 
     char* buf = malloc(sz + 1);
 
     fread(buf, 1, sz, file);
     buf[sz] = '\0';
+    
+    fclose(file);
 
     return buf;
 }
@@ -24,7 +32,15 @@ Shader load_shader_from_file(const char* vs, const char* fs, const char* gs)
     char* f_src =      read_file(fs);
     char* g_src = gs ? read_file(gs) : NULL;
     
-    Shader shdr = shdr_compile(g_src, f_src, g_src);
+    if (!v_src || !f_src || (gs && !g_src)) {
+        fprintf(stderr, "Error: Failed to load shader files\n");
+        free(v_src);
+        free(f_src);
+        free(g_src);
+        return 0;
+    }
+    
+    Shader shdr = shdr_compile(v_src, f_src, g_src);
     
     free(v_src); free(f_src); free(g_src);
 
