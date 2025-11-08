@@ -37,8 +37,8 @@ Texture load_texture_from_file(const char* file, bool alpha)
     Texture tex = 0;
     if (alpha)
     {
-        settings.Internal_Format = GL_RGBA;
-        settings.Image_Format    = GL_RGBA;
+        settings.internal_format = GL_RGBA;
+        settings.image_format    = GL_RGBA;
     }
 
     int width, height, num_channels;

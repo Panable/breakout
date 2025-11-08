@@ -7,13 +7,13 @@ typedef unsigned int Texture;
 
 typedef struct TextureSettings_s
 {
-    unsigned int Internal_Format; // format of texture object
-    unsigned int Image_Format; // format of loaded image
+    unsigned int internal_format; // format of texture object
+    unsigned int image_format; // format of loaded image
     // texture configuration
-    unsigned int Wrap_S; // wrapping mode on S axis
-    unsigned int Wrap_T; // wrapping mode on T axis
-    unsigned int Filter_Min; // filtering mode if texture pixels < screen pixels
-    unsigned int Filter_Max; // filtering mode if texture pixels > screen pixels
+    unsigned int wrap_s; // wrapping mode on S axis
+    unsigned int wrap_t; // wrapping mode on T axis
+    unsigned int filter_min; // filtering mode if texture pixels < screen pixels
+    unsigned int filter_max; // filtering mode if texture pixels > screen pixels
 } TextureSettings;
 
 extern const TextureSettings DefaultTextureSettings;
