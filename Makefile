@@ -1,4 +1,5 @@
 # Thanks to Job Vranish (https://spin.atomicobject.com/2016/08/26/makefile-c-projects/)
+# Stolen shamelessly from https://makefiletutorial.com/ - awesome resource!
 TARGET_EXEC := breakout
 
 BUILD_DIR := ./build
