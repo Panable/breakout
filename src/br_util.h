@@ -1,5 +1,5 @@
-#ifndef UTIL_H
-#define UTIL_H
+#ifndef BR_UTIL_H
+#define BR_UTIL_H
 #include "shader.h"
 #include "texture.h"
 

@@ -4,7 +4,7 @@
 
 typedef unsigned int Shader;
 
-void shdr_use(unsigned int id);
+void shdr_use(Shader shdr);
 Shader shdr_compile(const char* v_src, const char* f_src, const char* g_src); // returns shader id.
 
 /* Uniforms */

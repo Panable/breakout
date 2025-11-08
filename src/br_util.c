@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include "stb_image.h"
-#include "util.h"
+#include "br_util.h"
 char* read_file(const char* file_name)
 {
     /* Get length of file */

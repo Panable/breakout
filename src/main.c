@@ -7,7 +7,6 @@
 #define SCR_WIDTH 800 * 3
 #define SCR_HEIGHT 600 * 3
 
-
 void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id, GLenum severity,
                             GLenum length, const char* message, const void* userparam);
 
@@ -19,6 +18,7 @@ extern void g_process_input(float deltaTime);
 extern void g_update(float deltaTime);
 extern void g_render();
 extern void g_release();
+extern void g_init();
 
 int main(void)
 {
@@ -61,6 +61,8 @@ int main(void)
 
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    g_init();
 
     float deltaTime = 0.0f;
     float lastFrame = 0.0f;
@@ -151,6 +153,6 @@ void APIENTRY glDebugOutput(GLenum source,
         case GL_DEBUG_SEVERITY_MEDIUM:          printf("Severity: Medium");             break;
         case GL_DEBUG_SEVERITY_LOW:             printf("Severity: Low");             break;
         case GL_DEBUG_SEVERITY_NOTIFICATION:    printf("Severity: Notification");             break;
-    }
+    } printf("\n");
 }
 

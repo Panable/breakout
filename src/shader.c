@@ -1,5 +1,4 @@
 #include "shader.h"
-#include "util.h"
 #include <glad/glad.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,9 +12,6 @@ void shdr_use(unsigned int id)
 
 Shader shdr_compile(const char* v_src, const char* f_src, const char* g_src)
 {
-    
-
-
     /* --------- Compile Shader --------- */
     unsigned int v_id, f_id, g_id, prg_id;
     v_id = f_id = g_id = prg_id = 0;
