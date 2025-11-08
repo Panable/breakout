@@ -1,31 +1,36 @@
-#include "types.h"
+#include "shader.h"
+#include "util.h"
 #include <glad/glad.h>
 #include <stdio.h>
 #include <string.h>
-#include <cglm/cglm.h>
 
-void shdr_check_compile_errors(unsigned int id, const char* type);
+unsigned int shdr_check_compile_errors(unsigned int id, const char* type);
 
 void shdr_use(unsigned int id)
 {
     glUseProgram(id);
 }
 
-unsigned int shdr_compile(const char* v_src, const char* f_src, const char* g_src)
+Shader shdr_compile(const char* v_src, const char* f_src, const char* g_src)
 {
-    unsigned int v_id, f_id, g_id;
+    
+
+
+    /* --------- Compile Shader --------- */
+    unsigned int v_id, f_id, g_id, prg_id;
+    v_id = f_id = g_id = prg_id = 0;
 
     /* Vertex */
     v_id = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(v_id, 1, &v_src, NULL);
     glCompileShader(v_id);
-    shdr_check_compile_errors(v_id, "VERTEX");
+    if (shdr_check_compile_errors(v_id, "VERTEX")) goto cleanup;
 
     /* Fragment */
     f_id = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(f_id, 1, &f_src, NULL);
     glCompileShader(f_id);
-    shdr_check_compile_errors(f_id, "FRAGMENT");
+    if(shdr_check_compile_errors(f_id, "FRAGMENT")) goto cleanup;
 
     /* Geometry */
     if (g_src != NULL)
@@ -33,11 +38,11 @@ unsigned int shdr_compile(const char* v_src, const char* f_src, const char* g_sr
         g_id = glCreateShader(GL_GEOMETRY_SHADER);
         glShaderSource(g_id, 1, &g_src, NULL);
         glCompileShader(g_id);
-        shdr_check_compile_errors(g_id, "GEOMETRY");
+        if(shdr_check_compile_errors(g_id, "GEOMETRY")) goto cleanup;
     }
 
     /* Link Program */
-    unsigned int prg_id = glCreateProgram();
+    prg_id = glCreateProgram();
 
     glAttachShader(prg_id, v_id);
     glAttachShader(prg_id, f_id);
@@ -46,17 +51,20 @@ unsigned int shdr_compile(const char* v_src, const char* f_src, const char* g_sr
 
     glLinkProgram(prg_id);
 
-    shdr_check_compile_errors(prg_id, "PROGRAM");
+    if(shdr_check_compile_errors(prg_id, "PROGRAM"))
+    {
+        glDeleteProgram(prg_id);
+    }
 
+cleanup:
     glDeleteShader(v_id);
     glDeleteShader(f_id);
-    if (g_src != NULL)
-        glDeleteShader(g_id);
+    glDeleteShader(g_id);
 
     return prg_id;
 }
 
-void shdr_check_compile_errors(unsigned int id, const char* type)
+unsigned int shdr_check_compile_errors(unsigned int id, const char* type)
 {
     int success;
     char infoLog[1024];
@@ -67,6 +75,7 @@ void shdr_check_compile_errors(unsigned int id, const char* type)
         {
             glGetShaderInfoLog(id, 1024, NULL, infoLog);
             printf("| ERROR::SHADER: Compile-time error: Type: %s\n%s\n -- --------------------------------------------------- --\n", type, infoLog);
+            return 1;
         }
     }
     else
@@ -76,16 +85,19 @@ void shdr_check_compile_errors(unsigned int id, const char* type)
         {
             glGetProgramInfoLog(id, 1024, NULL, infoLog);
             printf("| ERROR::SHADER: Link-time error: Type: %s\n%s\n -- --------------------------------------------------- --\n", type, infoLog);
+            return 1;
         }
     }
+
+    return 0;
 }
 
-void shdr_set_float(const char* name, float value, unsigned int shdr_id)
+void shdr_set_float(const char* name, float value, Shader shdr)
 {
-    int location = glGetUniformLocation(shdr_id, name);
+    int location = glGetUniformLocation(shdr, name);
 
     if (location == -1) {
-        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr_id);
+        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr);
         return;
     }
 
@@ -93,60 +105,60 @@ void shdr_set_float(const char* name, float value, unsigned int shdr_id)
 }
 
 
-void shdr_set_int(const char* name, int value, unsigned int shdr_id)
+void shdr_set_int(const char* name, int value, Shader shdr)
 {
-    int location = glGetUniformLocation(shdr_id, name);
+    int location = glGetUniformLocation(shdr, name);
 
     if (location == -1) {
-        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr_id);
+        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr);
         return;
     }
 
     glUniform1i(location, value);
 }
 
-void shdr_set_vec2f(const char* name, vec2 value, unsigned int shdr_id)
+void shdr_set_vec2f(const char* name, vec2 value, Shader shdr)
 {
-    int location = glGetUniformLocation(shdr_id, name);
+    int location = glGetUniformLocation(shdr, name);
 
     if (location == -1) {
-        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr_id);
+        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr);
         return;
     }
 
     glUniform2f(location, value[0], value[1]);
 }
 
-void shdr_set_vec3f(const char* name, vec3 value, unsigned int shdr_id)
+void shdr_set_vec3f(const char* name, vec3 value, Shader shdr)
 {
-    int location = glGetUniformLocation(shdr_id, name);
+    int location = glGetUniformLocation(shdr, name);
 
     if (location == -1) {
-        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr_id);
+        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr);
         return;
     }
 
     glUniform3f(location, value[0], value[1], value[2]);
 }
 
-void shdr_set_vec4f(const char* name, vec4 value, unsigned int shdr_id)
+void shdr_set_vec4f(const char* name, vec4 value, Shader shdr)
 {
-    int location = glGetUniformLocation(shdr_id, name);
+    int location = glGetUniformLocation(shdr, name);
 
     if (location == -1) {
-        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr_id);
+        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr);
         return;
     }
 
     glUniform4f(location, value[0], value[1], value[2], value[3]);
 }
 
-void shdr_set_mat4(const char* name, mat4 mat, unsigned int shdr_id)
+void shdr_set_mat4(const char* name, mat4 mat, Shader shdr)
 {
-    int location = glGetUniformLocation(shdr_id, name);
+    int location = glGetUniformLocation(shdr, name);
 
     if (location == -1) {
-        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr_id);
+        fprintf(stderr, "Warning: uniform '%s' not found in program %u\n", name, shdr);
         return;
     }
 
