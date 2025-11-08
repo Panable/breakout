@@ -52,10 +52,11 @@ void g_update(float deltaTime)
 
 void g_render()
 {
-    vec2 pos = {200.0f, 200.0f};
+    // Center the sprite: (SCR_WIDTH/2 - size[0]/2, SCR_HEIGHT/2 - size[1]/2)
     vec2 size = {300.0f, 400.0f};
-    float rot = 45.0f;
-    vec3 col = {0.0f, 1.0f, 0.0f};
+    vec2 pos = {SCR_WIDTH/2.0f - size[0]/2.0f, SCR_HEIGHT/2.0f - size[1]/2.0f};
+    float rot = 0.0f;
+    vec3 col = {1.0f, 1.0f, 1.0f}; // White to show texture colors
 
     sr_draw_sprite(textures[TEX_FACE], pos, size, rot, col, sr);
 }
