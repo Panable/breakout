@@ -49,8 +49,9 @@ int main(void)
 
     /* Debug callback */
     int flags; glGetIntegerv(GL_CONTEXT_FLAGS, &flags);
-    if (flags & GL_CONTEXT_FLAGS)
+    if (flags & GL_CONTEXT_FLAG_DEBUG_BIT)
     {
+        printf("We're enabling the debugging callback!\n");
         glEnable(GL_DEBUG_OUTPUT);
         glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
         glDebugMessageCallback((GLDEBUGPROC)glDebugOutput, NULL);
